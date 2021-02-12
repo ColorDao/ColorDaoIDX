@@ -1,88 +1,89 @@
-import type { Doctype } from '@ceramicnetwork/common'
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Divider from '@material-ui/core/Divider'
-import Drawer from '@material-ui/core/Drawer'
-import Hidden from '@material-ui/core/Hidden'
-import IconButton from '@material-ui/core/IconButton'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import Paper from '@material-ui/core/Paper'
-import TextareaAutosize from '@material-ui/core/TextareaAutosize'
-import TextField from '@material-ui/core/TextField'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import type { Doctype } from "@ceramicnetwork/common";
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Paper from "@material-ui/core/Paper";
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
+import TextField from "@material-ui/core/TextField";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 import {
   createMuiTheme,
   makeStyles,
   useTheme,
   Theme,
   createStyles,
-} from '@material-ui/core/styles'
+} from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
+import "./App.css";
 
-import logo from './logo.png';
-import DownloadIcon from '@material-ui/icons/CloudDownload'
-import DeleteIcon from '@material-ui/icons/Delete'
-import EditIcon from '@material-ui/icons/Edit'
-import ErrorIcon from '@material-ui/icons/ErrorOutline'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import MenuIcon from '@material-ui/icons/Menu'
-import NoteIcon from '@material-ui/icons/Note'
-import NoteAddIcon from '@material-ui/icons/NoteAdd'
-import UploadIcon from '@material-ui/icons/CloudUpload'
-import { randomBytes } from '@stablelib/random'
-import React, { useRef, useState } from 'react'
-import { fromString, toString } from 'uint8arrays'
+import logo from "./logo.png";
+import DownloadIcon from "@material-ui/icons/CloudDownload";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import ErrorIcon from "@material-ui/icons/ErrorOutline";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import MenuIcon from "@material-ui/icons/Menu";
+import NoteIcon from "@material-ui/icons/Note";
+import NoteAddIcon from "@material-ui/icons/NoteAdd";
+import UploadIcon from "@material-ui/icons/CloudUpload";
+import { randomBytes } from "@stablelib/random";
+import React, { useRef, useState } from "react";
+import { fromString, toString } from "uint8arrays";
 
-import { useApp } from './state'
+import { useApp } from "./state";
 import type {
   AuthState,
   DraftStatus,
   IndexLoadedNote,
   State,
   StoredNote,
-} from './state'
+} from "./state";
 
-const drawerWidth = 200
+const drawerWidth = 200;
 
 const theme = createMuiTheme({
   palette: {
-    type: "dark"
-  }
+    type: "dark",
+  },
 });
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex',
+      display: "flex",
     },
     palette: {
-      type: "dark"
+      type: "#d63771;",
     },
     drawer: {
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up("sm")]: {
         width: drawerWidth,
         flexShrink: 0,
       },
     },
     appBar: {
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up("sm")]: {
         width: `calc(100% - ${drawerWidth}px)`,
         marginLeft: drawerWidth,
       },
     },
     menuButton: {
       marginRight: theme.spacing(2),
-      [theme.breakpoints.up('sm')]: {
-        display: 'none',
+      [theme.breakpoints.up("sm")]: {
+        display: "none",
       },
     },
     // necessary for content to be below app bar
@@ -104,17 +105,17 @@ const useStyles = makeStyles((theme: Theme) =>
       border: 0,
       fontSize: theme.typography.pxToRem(18),
       padding: theme.spacing(2),
-      width: '100%',
+      width: "100%",
     },
-  }),
-)
+  })
+);
 
 type NotesListProps = {
-  deleteDraft: () => void
-  openDraft: () => void
-  openNote: (docID: string) => void
-  state: State
-}
+  deleteDraft: () => void;
+  openDraft: () => void;
+  openNote: (docID: string) => void;
+  state: State;
+};
 
 function PetitionList({
   deleteDraft,
@@ -122,70 +123,72 @@ function PetitionList({
   openNote,
   state,
 }: NotesListProps) {
-  let draft
-  if (state.nav.type === 'draft') {
-    let icon
+  let draft;
+  if (state.nav.type === "draft") {
+    let icon;
     switch (state.draftStatus) {
-      case 'failed':
-        icon = <ErrorIcon />
-        break
-      case 'saving':
-        icon = <UploadIcon />
-        break
+      case "failed":
+        icon = <ErrorIcon />;
+        break;
+      case "saving":
+        icon = <UploadIcon />;
+        break;
       default:
-        icon = <EditIcon />
+        icon = <EditIcon />;
     }
     draft = (
       <ListItem button onClick={() => openDraft()} selected>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText primary="Draft petition" />
+        <ListItemText primary="Draft Proof" />
         <ListItemSecondaryAction>
           <IconButton
             edge="end"
             aria-label="delete"
-            onClick={() => deleteDraft()}>
+            onClick={() => deleteDraft()}
+          >
             <DeleteIcon />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
-    )
-  } else if (state.auth.status === 'done') {
+    );
+  } else if (state.auth.status === "done") {
     draft = (
       <ListItem button onClick={() => openDraft()}>
         <ListItemIcon>
           <NoteAddIcon />
         </ListItemIcon>
-        <ListItemText primary="New Petition" />
+        <ListItemText primary="New Proof" />
       </ListItem>
-    )
+    );
   } else {
     draft = (
       <ListItem>
         <ListItemIcon>
           <NoteAddIcon />
         </ListItemIcon>
-        <ListItemText primary="Authenticate to create petition" />
+        <ListItemText primary="Authenticate to create proof of action" />
       </ListItem>
-    )
+    );
   }
 
   const petitions = Object.entries(state.petitions).map(([docID, petition]) => {
-    const isSelected = state.nav.type === 'petition' && state.nav.docID === docID
+    const isSelected =
+      state.nav.type === "petition" && state.nav.docID === docID;
 
-    let icon
+    let icon;
     switch (petition.status) {
-      case 'loading failed':
-      case 'saving failed':
-        icon = <ErrorIcon />
-        break
-      case 'loading':
-        icon = <DownloadIcon />
-        break
-      case 'saving':
-        icon = <UploadIcon />
-        break
+      case "loading failed":
+      case "saving failed":
+        icon = <ErrorIcon />;
+        break;
+      case "loading":
+        icon = <DownloadIcon />;
+        break;
+      case "saving":
+        icon = <UploadIcon />;
+        break;
       default:
-        icon = isSelected ? <EditIcon /> : <NoteIcon />
+        icon = isSelected ? <EditIcon /> : <NoteIcon />;
     }
 
     return (
@@ -193,12 +196,13 @@ function PetitionList({
         button
         key={docID}
         onClick={() => openNote(docID)}
-        selected={isSelected}>
+        selected={isSelected}
+      >
         <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText primary={petition.title} />
       </ListItem>
-    )
-  })
+    );
+  });
 
   return (
     <>
@@ -206,36 +210,33 @@ function PetitionList({
       <Divider />
       <List>{petitions}</List>
     </>
-  )
+  );
 }
 
 type AuthenticateProps = {
-  authenticate: (seed: Uint8Array) => void
-  state: AuthState
-}
+  authenticate: (seed: Uint8Array) => void;
+  state: AuthState;
+};
 
 function AuthenticateScreen({ authenticate, state }: AuthenticateProps) {
-  const [seed, setSeed] = useState('')
-  const isLoading = state.status === 'loading'
+  const [seed, setSeed] = useState("");
+  const isLoading = state.status === "loading";
 
-  return state.status === 'done' ? (
+  return state.status === "done" ? (
     <>
-    <Typography>Authenticated with ID {state.idx.id}</Typography>
-    <div>
-<Typography>
-   MerchantName: "EthDenver",
-   Version: "08/26/2020",
-   Name: "EthDevner PoL PoC",
-   DisplayName: "RICARDO, RICKY",
-   County: "Jefferson County",
-   State: "CO",
-  </Typography>
-    </div>
-</>
+      <Typography>Authenticated with ID {state.idx.id}</Typography>
+      <div>
+        <Typography>
+          MerchantName: "EthDenver", Version: "08/26/2020", Name: "EthDevner PoL
+          PoC", DisplayName: "RICARDO, RICKY", County: "Jefferson County",
+          State: "CO",
+        </Typography>
+      </div>
+    </>
   ) : (
     <>
       <Typography>
-        You need to authenticate to load your existing petitions and create new
+        You need to authenticate to load your existing proofs and create new
         ones.
       </Typography>
       <div>
@@ -249,67 +250,70 @@ function AuthenticateScreen({ authenticate, state }: AuthenticateProps) {
           placeholder="base16-encoded string of 32 bytes length"
           type="text"
           value={seed}
-        />
-      </div>
+        />{" "}
+        <Button
+          color="primary"
+          disabled={isLoading}
+          onClick={() => setSeed(toString(randomBytes(32), "base16"))}
+        >
+          Generate random seed
+        </Button>
+      </div>{" "}
+      <img src={logo} className="logo" alt="logo" />
       <Button
         color="primary"
-        disabled={seed === '' || isLoading}
-        onClick={() => authenticate(fromString(seed, 'base16'))}
-        variant="contained">
+        disabled={seed === "" || isLoading}
+        onClick={() => authenticate(fromString(seed, "base16"))}
+        variant="contained"
+      >
         Authenticate
       </Button>
-      <Button
-        color="primary"
-        disabled={isLoading}
-        onClick={() => setSeed(toString(randomBytes(32), 'base16'))}>
-        Generate random seed
-      </Button>
-<img src={logo} alt="logo" />
     </>
-  )
+  );
 }
 
 type DraftScreenProps = {
-  save: (title: string, text: string) => void
-  status: DraftStatus
-}
+  save: (title: string, text: string) => void;
+  status: DraftStatus;
+};
 
 function DraftScreen({ save, status }: DraftScreenProps) {
-  const classes = useStyles()
-  const [open, setOpen] = useState(false)
-  const textRef = useRef<HTMLTextAreaElement>(null)
-  const titleRef = useRef<HTMLInputElement>(null)
+  const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
 
   const handleOpen = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const handleSave = () => {
-    const text = textRef.current?.value
-    const title = titleRef.current?.value
+    const text = textRef.current?.value;
+    const title = titleRef.current?.value;
     if (text && title) {
-      save(title, text)
+      save(title, text);
     }
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   return (
     <>
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Save petition</DialogTitle>
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Save Proof</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="title"
-            label="Petition title"
+            label="Proof title"
             inputRef={titleRef}
             type="text"
             fullWidth
@@ -320,15 +324,15 @@ function DraftScreen({ save, status }: DraftScreenProps) {
             Cancel
           </Button>
           <Button onClick={handleSave} color="primary" variant="outlined">
-            Save petition
+            Save Proof
           </Button>
         </DialogActions>
       </Dialog>
       <Paper elevation={5}>
         <TextareaAutosize
           className={classes.noteTextarea}
-          disabled={status === 'saving'}
-          placeholder="Petition contents..."
+          disabled={status === "saving"}
+          placeholder="Proof hash"
           ref={textRef}
           rowsMin={10}
           rowsMax={20}
@@ -337,39 +341,40 @@ function DraftScreen({ save, status }: DraftScreenProps) {
       <Button
         className={classes.noteSaveButton}
         color="primary"
-        disabled={status === 'saving'}
+        disabled={status === "saving"}
         onClick={handleOpen}
-        variant="contained">
+        variant="contained"
+      >
         Save
       </Button>
     </>
-  )
+  );
 }
 
 type NoteScreenProps = {
-  petition: IndexLoadedNote | StoredNote
-  save: (doc: Doctype, text: string) => void
-}
+  petition: IndexLoadedNote | StoredNote;
+  save: (doc: Doctype, text: string) => void;
+};
 
 function NoteScreen({ petition, save }: NoteScreenProps) {
-  const classes = useStyles()
-  const textRef = useRef<HTMLTextAreaElement>(null)
+  const classes = useStyles();
+  const textRef = useRef<HTMLTextAreaElement>(null);
 
-  if (petition.status === 'loading failed') {
-    return <Typography>Failed to load petition!</Typography>
+  if (petition.status === "loading failed") {
+    return <Typography>Failed to load petition!</Typography>;
   }
 
-  if (petition.status === 'init' || petition.status === 'loading') {
-    return <Typography>Loading petition...</Typography>
+  if (petition.status === "init" || petition.status === "loading") {
+    return <Typography>Loading petition...</Typography>;
   }
 
-  const doc = (petition as StoredNote).doc
+  const doc = (petition as StoredNote).doc;
   return (
     <>
       <Paper elevation={5}>
         <TextareaAutosize
           className={classes.noteTextarea}
-          disabled={petition.status === 'saving'}
+          disabled={petition.status === "saving"}
           defaultValue={doc.content.text}
           placeholder="Petition contents..."
           ref={textRef}
@@ -380,24 +385,25 @@ function NoteScreen({ petition, save }: NoteScreenProps) {
       <Button
         className={classes.noteSaveButton}
         color="primary"
-        disabled={petition.status === 'saving'}
-        onClick={() => save(doc, textRef.current?.value ?? '')}
-        variant="contained">
+        disabled={petition.status === "saving"}
+        onClick={() => save(doc, textRef.current?.value ?? "")}
+        variant="contained"
+      >
         Save
       </Button>
     </>
-  )
+  );
 }
 
 export default function App() {
-  const app = useApp()
-  const classes = useStyles()
-  const theme = useTheme()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const app = useApp();
+  const classes = useStyles();
+  const theme = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
+    setMobileOpen(!mobileOpen);
+  };
 
   const drawer = (
     <div>
@@ -409,31 +415,31 @@ export default function App() {
         state={app.state}
       />
     </div>
-  )
+  );
 
-  let screen
+  let screen;
   switch (app.state.nav.type) {
-    case 'draft':
+    case "draft":
       screen = (
         <DraftScreen save={app.saveDraft} status={app.state.draftStatus} />
-      )
-      break
-    case 'petition':
+      );
+      break;
+    case "petition":
       screen = (
         <NoteScreen
           key={app.state.nav.docID}
           petition={app.state.petitions[app.state.nav.docID]}
           save={app.saveNote}
         />
-      )
-      break
+      );
+      break;
     default:
       screen = (
         <AuthenticateScreen
           authenticate={app.authenticate}
           state={app.state.auth}
         />
-      )
+      );
   }
 
   return (
@@ -446,7 +452,8 @@ export default function App() {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            className={classes.menuButton}>
+            className={classes.menuButton}
+          >
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} noWrap variant="h6">
@@ -458,11 +465,12 @@ export default function App() {
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}
             classes={{ paper: classes.drawerPaper }}
-            ModalProps={{ keepMounted: true }}>
+            ModalProps={{ keepMounted: true }}
+          >
             {drawer}
           </Drawer>
         </Hidden>
@@ -470,7 +478,8 @@ export default function App() {
           <Drawer
             classes={{ paper: classes.drawerPaper }}
             variant="permanent"
-            open>
+            open
+          >
             {drawer}
           </Drawer>
         </Hidden>
@@ -480,5 +489,5 @@ export default function App() {
         {screen}
       </main>
     </div>
-  )
+  );
 }

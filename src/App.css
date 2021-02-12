@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #0053f8;
+  background-color: #d63771;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +35,51 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+.MuiAppBar-colorPrimary {
+  background-color: #d63771 !important;
+}
+
+.MuiButton-textPrimary {
+  color: #d63771 !important;
+}
+
+.MuiButton-containedPrimary,
+.MuiButton-containedPrimary:hover {
+  background-color: #d63771 !important;
+  color: white !important;
+}
+
+.MuiButton-contained.Mui-disabled {
+  color: rgba(0, 0, 0, 0.26) !important;
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.logo {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.MuiInput-underline:after {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  position: absolute;
+  transform: scaleX(0);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  border-bottom: 2px solid #d63771 !important;
+  pointer-events: none;
+}
+
+.MuiFormLabel-root.Mui-focused {
+  color: #d63771 !important;
+}
+
+.MuiButton-outlinedPrimary {
+  color: #d63771 !important;
+  border: 1px solid rgba(181, 63, 108, 0.5) !important;
 }
